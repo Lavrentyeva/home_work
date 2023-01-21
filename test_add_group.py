@@ -16,7 +16,6 @@ class TestAddGroup(unittest.TestCase):
 
 
     def open_home_page(self, wd):
-        # open home page
         wd.get("http://localhost/addressbook/")
 
     def login(self, wd, user_name, password):
