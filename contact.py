@@ -9,7 +9,7 @@ class Contact:
         self.address = address
         self.home = home
         self.mobile = mobile
-        self.work = work
+        self.work_phone = work
         self.fax = fax
         self.email = email
         self.email2 = email2
