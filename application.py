@@ -98,7 +98,7 @@ class Application:
         # Input home
         wd.find_element_by_name("home").click()
         wd.find_element_by_name("home").clear()
-        wd.find_element_by_name("home").send_keys(contact.home)
+        wd.find_element_by_name("home").send_keys(contact.home_phone)
         # Input mobile
         wd.find_element_by_name("mobile").click()
         wd.find_element_by_name("mobile").clear()
@@ -106,7 +106,7 @@ class Application:
         # Input work
         wd.find_element_by_name("work").click()
         wd.find_element_by_name("work").clear()
-        wd.find_element_by_name("work").send_keys(contact.work)
+        wd.find_element_by_name("work").send_keys(contact.work_phone)
         # Input fax
         wd.find_element_by_name("fax").click()
         wd.find_element_by_name("fax").clear()
