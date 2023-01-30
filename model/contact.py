@@ -7,7 +7,7 @@ class Contact:
         self.title = title
         self.company = company
         self.address = address
-        self.home_phone = home
+        self.home = home
         self.mobile = mobile
         self.work_phone = work
         self.fax = fax
