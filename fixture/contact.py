@@ -8,8 +8,9 @@ class ContactHelper:
 
     def open_contats_page(self):
         wd = self.app.wd
-        wd.find_element_by_link_text("add new").click()
-        wd.get("http://localhost/addressbook/edit.php")
+        if not (wd.current_url.endswith("/edit.php") and len(wd.find_elements_by_name("Enter")) > 0):
+             wd.find_element_by_link_text("add new").click()
+             wd.get("http://localhost/addressbook/edit.php")
 
     def back_homepage(self):
         wd = self.app.wd
@@ -178,7 +179,8 @@ class ContactHelper:
 
     def open_home_page(self):
         wd = self.app.wd
-        wd.find_element_by_link_text('home').click()
+        if not (wd.current_url.endswith("/addressbook/") and len(wd.find_elements_by_name("Send e-Mail")) > 0):
+            wd.find_element_by_link_text('home').click()
 
     def create(self, new_contact_data):
         wd = self.app.wd
