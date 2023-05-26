@@ -1,7 +1,9 @@
 import self as self
+
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.support.select import Select
 from model.contact import Contact
+
 
 class ContactHelper:
     def __init__(self, app):
@@ -27,10 +29,7 @@ class ContactHelper:
         # submit deletion
         wd.find_element_by_xpath("// input[ @ value = 'Delete']").click()
         wd.switch_to.alert.accept()
-        # accept alert OK
-        Alert(wd).accept()
-        wd.find_element_by_css_selector("div.msgbox")
-
+        self.contaсt_cache = None
 
     def edit(self, new_contact_data):
         wd = self.app.wd
@@ -41,6 +40,7 @@ class ContactHelper:
         self.fill_contact_form(new_contact_data)
         wd.find_element_by_name("update").click()
         self.back_homepage()
+        self.contaсt_cache = None
     def fill_contact_form(self, contact):
         wd = self.app.wd
         self.change_field_value("firstname", contact.firstname)
@@ -100,6 +100,7 @@ class ContactHelper:
         # Submit
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
         self.back_homepage()
+        self.contaсt_cache = None
 
     def modify_first_contact(self, new_contact_data):
         wd = self.app.wd
@@ -109,23 +110,25 @@ class ContactHelper:
         self.fill_contact_form(new_contact_data)
         wd.find_element_by_name("update").click()
         self.back_homepage()
+        self.contaсt_cache = None
     def count(self):
         wd = self.app.wd
         self.open_home_page()
         return len(wd.find_elements_by_name("selected[]"))
 
 
-    def get_contact_list(self):
-        wd = self.app.wd
-        self.open_home_page()
-        contats = []
-        for element in wd.find_elements_by_name("entry"):
-            cells = element.find_elements_by_css_selector("td")
-            firstname = cells[2].text
-            lastname = cells[1].text
-            id = element.find_element_by_name("selected[]").get_attribute("value")
-            contats.append(Contact(firstname=firstname, lastname=lastname, id=id))
-        return contats
+    def get_contact_list(self, contaсt_cache = None):
+        if contaсt_cache is None:
+            wd = self.app.wd
+            self.open_home_page()
+            self.contaсt_cache = []
+            for element in wd.find_elements_by_name("entry"):
+                cells = element.find_elements_by_css_selector("td")
+                firstname = cells[2].text
+                lastname = cells[1].text
+                id = element.find_element_by_name("selected[]").get_attribute("value")
+                self.contaсt_cache.append(Contact(firstname=firstname, lastname=lastname, id=id))
+        return list(self.contaсt_cache)
 
 
 
