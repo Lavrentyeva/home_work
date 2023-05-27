@@ -20,19 +20,37 @@ class ContactHelper:
         wd.find_element_by_link_text("home page").click()
         wd.get("http://localhost/addressbook/index.php")
 
-
     def delete_first_contact(self):
+        self.delete_contact_by_index(0)
+
+    def select_contact_by_index(self, index):
         wd = self.app.wd
         self.open_home_page()
-        # select first contact
-        wd.find_element_by_name("selected[]").click()
+        edit_button = wd.find_elements_by_xpath('//img[@alt="Edit"]')
+        edit_button[index].click()
+
+    def delete_contact_by_index(self, index):
+       # wd = self.app.wd
+       # self.open_home_page()
+        # select contact by index
+        #self.select_contact_by_index(index)
         # submit deletion
-        wd.find_element_by_xpath("// input[ @ value = 'Delete']").click()
-        wd.switch_to.alert.accept()
-        self.contaсt_cache = None
+        #wd.find_element_by_xpath("//input[@value='Delete']").click()
+        # accept alert OK
+        #Alert(wd).accept()
+        #wd.find_element_by_css_selector("div.msgbox")
+        #self.return_homepage()
+        #self.contact_cache = None
+
+       wd = self.app.wd
+       self.select_contact_by_index()
+       wd.find_element_by_xpath('//input[@value="Delete"]').click()
+       wd.switch_to.alert.accept()
+       wd.find_element_by_css_selector("div.msgbox")
+       self.open_home_page()
+       self.contact_cache = None
 
     def edit(self, new_contact_data):
-        wd = self.app.wd
         wd = self.app.wd
         self.open_home_page()
         self.select_first_contact()
@@ -103,14 +121,20 @@ class ContactHelper:
         self.contaсt_cache = None
 
     def modify_first_contact(self, new_contact_data):
+        self.modify_contact_by_index(0)
+
+
+    def modify_contact_by_index(self, index, new_contact_data):
         wd = self.app.wd
         self.open_home_page()
-        self.select_first_contact()
+        self.select_contact_by_index(index)
         # fill group form
         self.fill_contact_form(new_contact_data)
         wd.find_element_by_name("update").click()
         self.back_homepage()
         self.contaсt_cache = None
+
+
     def count(self):
         wd = self.app.wd
         self.open_home_page()
