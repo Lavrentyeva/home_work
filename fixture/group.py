@@ -100,9 +100,10 @@ class GroupHelper:
         self.open_groups_page()
         return len(wd.find_elements_by_name("selected[]"))
 
+    group_cache = None
 
-    def get_group_list(self, group_cache = None):
-        if group_cache is None:
+    def get_group_list(self):
+        if self.group_cache is None:
             wd = self.app.wd
             self.open_groups_page()
             self.group_cache = []

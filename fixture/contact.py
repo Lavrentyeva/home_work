@@ -43,7 +43,7 @@ class ContactHelper:
         #self.contact_cache = None
 
        wd = self.app.wd
-       self.select_contact_by_index()
+       self.select_contact_by_index(index)
        wd.find_element_by_xpath('//input[@value="Delete"]').click()
        wd.switch_to.alert.accept()
        wd.find_element_by_css_selector("div.msgbox")
@@ -140,9 +140,10 @@ class ContactHelper:
         self.open_home_page()
         return len(wd.find_elements_by_name("selected[]"))
 
+    contaсt_cache = None
 
-    def get_contact_list(self, contaсt_cache = None):
-        if contaсt_cache is None:
+    def get_contact_list(self):
+        if self.contaсt_cache is None:
             wd = self.app.wd
             self.open_home_page()
             self.contaсt_cache = []
