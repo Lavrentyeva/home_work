@@ -1,4 +1,5 @@
 import self as self
+import re
 
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.support.select import Select
@@ -29,25 +30,20 @@ class ContactHelper:
         edit_button = wd.find_elements_by_xpath('//img[@alt="Edit"]')
         edit_button[index].click()
 
-    def delete_contact_by_index(self, index):
-       # wd = self.app.wd
-       # self.open_home_page()
-        # select contact by index
-        #self.select_contact_by_index(index)
-        # submit deletion
-        #wd.find_element_by_xpath("//input[@value='Delete']").click()
-        # accept alert OK
-        #Alert(wd).accept()
-        #wd.find_element_by_css_selector("div.msgbox")
-        #self.return_homepage()
-        #self.contact_cache = None
+    def open_contact_view_page_by_index(self, index):
+        wd = self.app.wd
+        self.open_home_page()
+        view_button = wd.find_elements_by_xpath('//img[@alt="Details"]')
+        view_button[index].click()
 
+    def delete_contact_by_index(self, index):
        wd = self.app.wd
-       self.select_contact_by_index(index)
+       #self.select_contact_by_index(index)
+       self.open_home_page()
+       wd.find_elements_by_name("selected[]")[index].click()
        wd.find_element_by_xpath('//input[@value="Delete"]').click()
        wd.switch_to.alert.accept()
-       wd.find_element_by_css_selector("div.msgbox")
-       self.open_home_page()
+       #wd.implicitly_wait(5)
        self.contact_cache = None
 
     def edit(self, new_contact_data):
@@ -68,9 +64,9 @@ class ContactHelper:
         self.change_field_value("title", contact.title)
         self.change_field_value("company", contact.company)
         self.change_field_value("address", contact.address)
-        self.change_field_value("home", contact.home)
-        self.change_field_value("mobile", contact.mobile)
-        self.change_field_value("work", contact.work_phone)
+        self.change_field_value("home", contact.homephone)
+        self.change_field_value("mobile", contact.mobilephone)
+        self.change_field_value("work", contact.workphone)
         self.change_field_value("fax", contact.fax)
         self.change_field_value("email", contact.email)
         self.change_field_value("email2", contact.email2)
@@ -83,7 +79,7 @@ class ContactHelper:
         self.change_fieled_value_for_selects("amonth", contact.amonth)
         self.change_field_value("ayear", contact.ayear)
         self.change_field_value("address2", contact.address2)
-        self.change_field_value("phone2", contact.phone2)
+        self.change_field_value("phone2", contact.secondaryphone)
         self.change_field_value("notes", contact.notes)
 
 
@@ -151,9 +147,66 @@ class ContactHelper:
                 cells = element.find_elements_by_css_selector("td")
                 firstname = cells[2].text
                 lastname = cells[1].text
+                address = cells[3].text
+                all_emails_from_home_page = cells[4].text
                 id = element.find_element_by_name("selected[]").get_attribute("value")
-                self.contaсt_cache.append(Contact(firstname=firstname, lastname=lastname, id=id))
+                all_phones = cells[5].text
+                self.contaсt_cache.append(Contact(firstname=firstname, lastname=lastname, id=id, address=address,
+                                                  all_phones_from_home_page=all_phones, all_emails_from_home_page=all_emails_from_home_page))
         return list(self.contaсt_cache)
+
+    def get_contact_info_from_edit_page(self, index):
+        wd = self.app.wd
+        self.select_contact_by_index(index)
+        firstname = wd.find_element_by_name("firstname").get_attribute("value")
+        lastname = wd.find_element_by_name("lastname").get_attribute("value")
+        address = wd.find_element_by_name("address").get_attribute("value")
+        id = wd.find_element_by_name("id").get_attribute("value")
+        homephone = wd.find_element_by_name("home").get_attribute("value")
+        workphone = wd.find_element_by_name("work").get_attribute("value")
+        mobilephone = wd.find_element_by_name("mobile").get_attribute("value")
+        secondaryphone = wd.find_element_by_name("phone2").get_attribute("value")
+        email = wd.find_element_by_name("email").get_attribute("value")
+        email2 = wd.find_element_by_name("email2").get_attribute("value")
+        email3 = wd.find_element_by_name("email3").get_attribute("value")
+
+        return Contact(firstname=firstname, lastname=lastname, id=id, address=address,
+                       homephone=homephone, workphone=workphone,
+                       mobilephone=mobilephone, secondaryphone=secondaryphone, email=email, email2=email2, email3=email3)
+
+    def get_contact_by_index(self, index):
+        wd = self.app.wd
+        self.open_home_page()
+        wd.find_elements_by_name("selected[]")[index].click()
+        for element in wd.find_elements_by_name("entry"):
+            id = element.find_element_by_name("selected[]").get_attribute("value")
+            cells = element.find_elements_by_css_selector("td")
+            lastname = cells[1].text
+            firstname = cells[2].text
+            address = cells[3].text
+            all_emails_from_home_page = cells[4].text
+            all_phones = cells[5].text
+            return Contact(firstname=firstname, lastname=lastname, id=id, address=address,
+                       all_phones_from_home_page=all_phones, all_emails_from_home_page=all_emails_from_home_page)
+
+
+    def get_contact_from_view_page(self, index):
+        wd = self.app.wd
+        self.open_contact_view_page_by_index(index)
+        text = wd.find_element_by_id("content").text
+        homephone = re.search("H: (.*)", text).group(1)
+        workphone = re.search("W: (.*)", text).group(1)
+        mobilephone = re.search("M: (.*)", text).group(1)
+        secondaryphone = re.search("P: (.*)", text).group(1)
+        return Contact(homephone=homephone, workphone=workphone,
+                       mobilephone=mobilephone, secondaryphone=secondaryphone)
+
+
+
+
+
+
+
 
 
 
