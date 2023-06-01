@@ -1,14 +1,33 @@
-# -*- coding: utf-8 -*-
+import re
+from random import randrange
 from model.contact import Contact
+import pytest
+import random
+import string
 
-def test_add_contact(app):
+def random_string(prefix, maxlen):
+    symbols = string.ascii_letters + string.digits + " "*10
+    return prefix + "".join([random.choice(symbols) for i in range(random.randrange(maxlen))])
+
+testdata = [Contact(firstname=random_string("firstname", 10), middlename=random_string("middlename", 10), lastname=random_string("lastname", 10),
+                    nickname=random_string("nickname", 10), title=random_string("title", 10), company=random_string("company", 10), address=random_string("address", 10),
+                    homephone=random_string("homephone", 10), mobilephone=random_string("mobilephone", 10), workphone=random_string("workphone", 10), fax=random_string("fax", 10),
+                    email=random_string("email", 10), email2=random_string("email2", 10), email3=random_string("email3", 10), homepage=random_string("homepage", 10),
+                    bday="1", bmonth="January", byear="1999", aday="1", amonth="January",
+                    ayear="1999", address2=random_string("address2", 10), secondaryphone=random_string("secondaryphone", 10), notes=random_string("notes", 10))
+                    for i in range(2)
+            ]
+
+@pytest.mark.parametrize("contact", testdata, ids=[repr(x) for x in testdata])
+
+
+def test_add_contact(app, contact):
     old_contacts = app.contact.get_contact_list()
-    contact = Contact(firstname="Vera", middlename ="Ivanovna", lastname="Lavrentyeva", nickname="Listopad", title="VVV", company="Romashka",
-                               address="qqq", homephone="qqq", mobilephone="1234567", workphone="aaaa", fax="12365498", email="qqq@qq.qq", email2="qqq2@qq.qq", email3="qqq3@qq.qq",
-                               homepage="www.www.ww", bday="1", bmonth="January", byear="1999", aday="1", amonth="January",
-                               ayear="1999", address2="zzz", secondaryphone="xxx", notes="ccc")
     app.contact.create(contact)
     assert len(old_contacts) + 1 == app.contact.count()
     new_contacts = app.contact.get_contact_list()
     old_contacts.append(contact)
     assert sorted(old_contacts, key=Contact.id_or_max) == sorted(new_contacts, key=Contact.id_or_max)
+
+
+
