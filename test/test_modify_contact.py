@@ -6,10 +6,11 @@ def test_modify_contact_firstname(app):
         app.contact.create(
             Contact(firstname="Vera", middlename="Ivanovna", lastname="Lavrentyeva", nickname="Listopad", title="VVV",
                     company="Romashka",
-                    address="qqq", home="qqq", mobile="1234567", work="aaaa", fax="12365498", email="qqq@qq.qq",
+                    address="qqq", homephone="qqq", mobilephone="1234567", workphone="aaaa", fax="12365498",
+                    email="qqq@qq.qq",
                     email2="qqq2@qq.qq", email3="qqq3@qq.qq",
                     homepage="www.www.ww", bday="1", bmonth="January", byear="1999", aday="1", amonth="January",
-                    ayear="1999", address2="zzz", phone2="xxx", notes="ccc"))
+                    ayear="1999", address2="zzz", secondaryphone="xxx", notes="ccc"))
     old_contact = app.contact.get_contact_list()
     index = randrange(len(old_contact))
     contact = Contact(firstname="New firstname")
@@ -25,10 +26,11 @@ def test_modify_contact_middlename(app):
         app.contact.create(
             Contact(firstname="Vera", middlename="Ivanovna", lastname="Lavrentyeva", nickname="Listopad", title="VVV",
                     company="Romashka",
-                    address="qqq", home="qqq", mobile="1234567", work="aaaa", fax="12365498", email="qqq@qq.qq",
+                    address="qqq", homephone="qqq", mobilephone="1234567", workphone="aaaa", fax="12365498",
+                    email="qqq@qq.qq",
                     email2="qqq2@qq.qq", email3="qqq3@qq.qq",
                     homepage="www.www.ww", bday="1", bmonth="January", byear="1999", aday="1", amonth="January",
-                    ayear="1999", address2="zzz", phone2="xxx", notes="ccc"))
+                    ayear="1999", address2="zzz", secondaryphone="xxx", notes="ccc"))
 
     old_contact = app.contact.get_contact_list()
     index = randrange(len(old_contact))
