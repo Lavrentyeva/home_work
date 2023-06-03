@@ -1,4 +1,4 @@
-import self as self
+#import self as self
 import re
 
 from selenium.webdriver.common.alert import Alert

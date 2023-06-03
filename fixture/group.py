@@ -72,7 +72,7 @@ class GroupHelper:
         wd.find_element_by_name("new").click()
         # fill group form
         self.fill_group_form(new_group_data)
-        # submit gropu creation
+        # submit gropup creation
         wd.find_element_by_name("submit").click()
         self.return_to_groups_page()
         self.group_cache = None
