@@ -1,72 +1,33 @@
-
+# -*- coding: utf-8 -*-
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import NoAlertPresentException
+# Заполнить контакты
+from model.contact import Contact
+import unittest
 
-class Application:
-    def __init__(self):
+class TestAddContact(unittest.TestCase):
+    def setUp(self):
         self.wd = webdriver.Firefox()
         self.wd.implicitly_wait(30)
-    def open_home_page(self):
-        wd = self.wd
-        wd.get("http://localhost/addressbook/")
 
-    def login(self, user_name, password):
-        wd = self.wd
-        self.open_home_page()
+    def open_home_page(self, wd):
+        wd.get("http://localhost/addressbook/group.php")
+
+
+    def login(self, wd, username, password):
         wd.find_element_by_name("user").click()
         wd.find_element_by_name("user").clear()
-        wd.find_element_by_name("user").send_keys(user_name)
+        wd.find_element_by_name("user").send_keys(username)
         wd.find_element_by_name("pass").click()
         wd.find_element_by_name("pass").clear()
         wd.find_element_by_name("pass").send_keys(password)
         wd.find_element_by_xpath("//input[@value='Login']").click()
 
-    def open_groups_page(self):
-        wd = self.wd
-        wd.find_element_by_link_text("groups").click()
-        wd.get("http://localhost/addressbook/group.php")
-
-    def open_contats_page(self):
-        wd = self.wd
+    def open_contats_page(self, wd):
         wd.find_element_by_link_text("add new").click()
         wd.get("http://localhost/addressbook/edit.php")
 
-    def create_group(self, group):
-        wd = self.wd
-        self.open_groups_page()
-        # init group creation
-        wd.find_element_by_name("new").click()
-        # fill group form
-        wd.find_element_by_name("group_name").click()
-        wd.find_element_by_name("group_name").clear()
-        wd.find_element_by_name("group_name").send_keys(group.name)
-        wd.find_element_by_name("group_header").click()
-        wd.find_element_by_name("group_header").click()
-        wd.find_element_by_name("group_header").clear()
-        wd.find_element_by_name("group_header").send_keys(group.header)
-        wd.find_element_by_name("group_footer").click()
-        wd.find_element_by_name("group_footer").clear()
-        wd.find_element_by_name("group_footer").send_keys(group.footer)
-        # submit gropu creation
-        wd.find_element_by_name("submit").click()
-        self.return_to_groups_page()
-
-    def return_to_groups_page(self):
-        wd = self.wd
-        wd.find_element_by_link_text("groups").click()
-
-    def back_homepage(self):
-        wd = self.wd
-        wd.find_element_by_link_text("home page").click()
-        wd.get("http://localhost/addressbook/index.php")
-
-    def create_contact(self, contact):
-        wd = self.wd
-        self.open_contats_page()
+    def create_contact(self, wd, contact):
         # Input firstname
         wd.find_element_by_name("firstname").click()
         wd.find_element_by_name("firstname").clear()
@@ -106,7 +67,7 @@ class Application:
         # Input work
         wd.find_element_by_name("work").click()
         wd.find_element_by_name("work").clear()
-        wd.find_element_by_name("work").send_keys(contact.work)
+        wd.find_element_by_name("work").send_keys(contact.work_phone)
         # Input fax
         wd.find_element_by_name("fax").click()
         wd.find_element_by_name("fax").clear()
@@ -162,11 +123,29 @@ class Application:
         wd.find_element_by_name("notes").send_keys(contact.notes)
         # Submit
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
-        self.back_homepage()
 
-    def logout(self):
-        wd = self.wd
+    def back_homepage(self, wd):
+        wd.find_element_by_link_text("home page").click()
+        wd.get("http://localhost/addressbook/index.php")
+
+    def logout(self, wd):
         wd.find_element_by_link_text("Logout").click()
 
-    def destroy(self):
-        self.wd.quit()
+    def test_add_contact(self):
+        wd = self.wd
+        self.open_home_page(wd)
+        self.login(wd, username="admin", password="secret")
+        self.open_contats_page(wd)
+        self.create_contact(wd, Contact(firstname="Vera", middlename ="Ivanovna", lastname="Lavrentyeva", nickname="Listopad", title="VVV", company="Romashka",
+                       address="qqq", home="qqq", mobile="1234567", work="aaaa", fax="12365498", email="qqq@qq.qq", email2="qqq2@qq.qq", email3="qqq3@qq.qq",
+                       homepage="www.www.ww", bday="1", bmonth="January", byear="1999", aday="1", amonth="January",
+                       ayear="1999", address2="zzz", phone2="xxx", notes="ccc"))
+        self.back_homepage(wd)
+        self.logout(wd)
+
+
+
+    def tearDown(self):
+            self.wd.quit()
+if __name__ == "__main__":
+        unittest.main()
