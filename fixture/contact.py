@@ -46,15 +46,7 @@ class ContactHelper:
        #wd.implicitly_wait(5)
        self.contact_cache = None
 
-    def edit(self, new_contact_data):
-        wd = self.app.wd
-        self.open_home_page()
-        self.select_first_contact()
-        # fill group form
-        self.fill_contact_form(new_contact_data)
-        wd.find_element_by_name("update").click()
-        self.back_homepage()
-        self.contaсt_cache = None
+
     def fill_contact_form(self, contact):
         wd = self.app.wd
         self.change_field_value("firstname", contact.firstname)
@@ -119,7 +111,6 @@ class ContactHelper:
     def modify_first_contact(self, new_contact_data):
         self.modify_contact_by_index(0)
 
-
     def modify_contact_by_index(self, index, new_contact_data):
         wd = self.app.wd
         self.open_home_page()
@@ -135,7 +126,6 @@ class ContactHelper:
         wd = self.app.wd
         self.open_home_page()
         return len(wd.find_elements_by_name("selected[]"))
-
     contaсt_cache = None
 
     def get_contact_list(self):
