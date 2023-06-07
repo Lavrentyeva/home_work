@@ -1,6 +1,5 @@
 #import self as self
 import re
-
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.support.select import Select
 from model.contact import Contact
@@ -10,37 +9,62 @@ class ContactHelper:
     def __init__(self, app):
         self.app = app
 
-    def open_contats_page(self):
-        wd = self.app.wd
-        if not (wd.current_url.endswith("/edit.php") and len(wd.find_elements_by_name("Enter")) > 0):
-             wd.find_element_by_link_text("add new").click()
-             wd.get("http://localhost/addressbook/edit.php")
+ #   def open_contats_page(self):
+ #       wd = self.app.wd
+ #       if not (wd.current_url.endswith("/edit.php") and len(wd.find_elements_by_name("Enter")) > 0):
+ #            wd.find_element_by_link_text("add new").click()
+ #            #wd.get("http://localhost/addressbook/edit.php")
+ #           self.app.open_home_page()
 
     def back_homepage(self):
         wd = self.app.wd
         wd.find_element_by_link_text("home page").click()
-        wd.get("http://localhost/addressbook/index.php")
+#        wd.get("http://localhost/addressbook/index.php")
+        self.open_home_page()
 
     def delete_first_contact(self):
         self.delete_contact_by_index(0)
 
     def select_contact_by_index(self, index):
         wd = self.app.wd
-        self.open_home_page()
+        #self.open_home_page()
+        self.app.open_home_page()
         edit_button = wd.find_elements_by_xpath('//img[@alt="Edit"]')
         edit_button[index].click()
 
+
+    def select_contact_by_id(self, id):
+        wd = self.app.wd
+#        self.open_home_page()
+        self.app.open_home_page()
+        wd.find_element_by_css_selector("input[value='%s']" % id).click()
+#       edit_button = element_by_css_selector("input[value='%s']" % id).click()
+#       edit_button[id].click()
+
     def open_contact_view_page_by_index(self, index):
         wd = self.app.wd
-        self.open_home_page()
+        #self.open_home_page()
+        self.app.open_home_page()
         view_button = wd.find_elements_by_xpath('//img[@alt="Details"]')
         view_button[index].click()
 
     def delete_contact_by_index(self, index):
        wd = self.app.wd
        #self.select_contact_by_index(index)
-       self.open_home_page()
+       #self.open_home_page()
+       self.app.open_home_page()
        wd.find_elements_by_name("selected[]")[index].click()
+       wd.find_element_by_xpath('//input[@value="Delete"]').click()
+       wd.switch_to.alert.accept()
+       #wd.implicitly_wait(5)
+       self.contact_cache = None
+
+
+    def delete_contact_by_id(self, id):
+       wd = self.app.wd
+       #self.open_home_page()
+       self.app.open_home_page()
+       wd.find_elements_by_name("selected[]")[id].click()
        wd.find_element_by_xpath('//input[@value="Delete"]').click()
        wd.switch_to.alert.accept()
        #wd.implicitly_wait(5)
@@ -100,7 +124,8 @@ class ContactHelper:
 
     def create(self, new_contact_data):
         wd = self.app.wd
-        self.open_contats_page()
+        self.app.open_home_page()
+        #self.open_contats_page()
         # fill contact form
         self.fill_contact_form(new_contact_data)
         # Submit
@@ -113,7 +138,8 @@ class ContactHelper:
 
     def modify_contact_by_index(self, index, new_contact_data):
         wd = self.app.wd
-        self.open_home_page()
+        #self.open_home_page()
+        self.app.open_home_page()
         self.select_contact_by_index(index)
         # fill group form
         self.fill_contact_form(new_contact_data)
@@ -124,14 +150,16 @@ class ContactHelper:
 
     def count(self):
         wd = self.app.wd
-        self.open_home_page()
+        #self.open_home_page()
+        self.app.open_home_page()
         return len(wd.find_elements_by_name("selected[]"))
     contaсt_cache = None
 
     def get_contact_list(self):
         if self.contaсt_cache is None:
             wd = self.app.wd
-            self.open_home_page()
+            #self.open_home_page()
+            self.app.open_home_page()
             self.contaсt_cache = []
             for element in wd.find_elements_by_name("entry"):
                 cells = element.find_elements_by_css_selector("td")
@@ -166,7 +194,8 @@ class ContactHelper:
 
     def get_contact_by_index(self, index):
         wd = self.app.wd
-        self.open_home_page()
+        #self.open_home_page()
+        self.app.open_home_page()
         wd.find_elements_by_name("selected[]")[index].click()
         for element in wd.find_elements_by_name("entry"):
             id = element.find_element_by_name("selected[]").get_attribute("value")
