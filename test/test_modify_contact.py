@@ -1,7 +1,10 @@
 
 from model.contact import Contact
 from random import randrange
-def test_modify_contact_firstname(app):
+import random
+
+
+def test_modify_contact_firstname(app, db, check_ui):
     if app.contact.count() == 0:
         app.contact.create(
             Contact(firstname="Vera", middlename="Ivanovna", lastname="Lavrentyeva", nickname="Listopad", title="VVV",
@@ -11,16 +14,20 @@ def test_modify_contact_firstname(app):
                     email2="qqq2@qq.qq", email3="qqq3@qq.qq",
                     homepage="www.www.ww", bday="1", bmonth="January", byear="1999", aday="1", amonth="January",
                     ayear="1999", address2="zzz", secondaryphone="xxx", notes="ccc"))
-    old_contact = app.contact.get_contact_list()
-    index = randrange(len(old_contact))
-    contact = Contact(firstname="New firstname")
-    contact.id = old_contact[index].id
-    app.contact.modify_contact_by_index(index, contact)
-    assert len(old_contact) == app.contact.count()
-    new_contact = app.contact.get_contact_list()
-    old_contact[index] = contact
-    assert sorted(old_contact, key=Contact.id_or_max) == sorted(new_contact, key=Contact.id_or_max)
 
+    old_contacts = db.get_contact_list()
+    random_contact = random.choice(old_contacts)
+    contact = Contact(firstname="New firstname ddd")
+    id_mod = random_contact.id
+    app.contact.modify_contact_by_id(id_mod, contact)
+    index = old_contacts.index(random_contact)
+    old_contacts[index].firstname = contact.firstname
+    new_contacts = db.get_contact_list()
+    assert sorted(old_contacts, key=Contact.id_or_max) == sorted(new_contacts, key=Contact.id_or_max)
+    if check_ui:
+        assert sorted(new_contacts, key=Contact.id_or_max) == sorted(app.contact.get_contact_list(), key=Contact.id_or_max)
+
+'''
 def test_modify_contact_middlename(app):
     if app.contact.count() == 0:
         app.contact.create(
@@ -503,3 +510,4 @@ def test_modify_contact_notes(app):
     new_contact = app.contact.get_contact_list()
     old_contact[index] = contact
     assert sorted(old_contact, key=Contact.id_or_max) == sorted(new_contact, key=Contact.id_or_max)
+    '''

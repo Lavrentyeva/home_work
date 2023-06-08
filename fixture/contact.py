@@ -38,8 +38,10 @@ class ContactHelper:
 #        self.open_home_page()
         self.app.open_home_page()
         wd.find_element_by_css_selector("input[value='%s']" % id).click()
-#       edit_button = element_by_css_selector("input[value='%s']" % id).click()
-#       edit_button[id].click()
+
+
+
+
 
     def open_contact_view_page_by_index(self, index):
         wd = self.app.wd
@@ -64,7 +66,7 @@ class ContactHelper:
        wd = self.app.wd
        #self.open_home_page()
        self.app.open_home_page()
-       wd.find_elements_by_name("selected[]")[id].click()
+       self.select_contact_by_id(id)
        wd.find_element_by_xpath('//input[@value="Delete"]').click()
        wd.switch_to.alert.accept()
        #wd.implicitly_wait(5)
@@ -125,7 +127,7 @@ class ContactHelper:
     def create(self, new_contact_data):
         wd = self.app.wd
         self.app.open_home_page()
-        #self.open_contats_page()
+        wd.find_element_by_link_text("add new").click()
         # fill contact form
         self.fill_contact_form(new_contact_data)
         # Submit
@@ -141,6 +143,17 @@ class ContactHelper:
         #self.open_home_page()
         self.app.open_home_page()
         self.select_contact_by_index(index)
+        # fill group form
+        self.fill_contact_form(new_contact_data)
+        wd.find_element_by_name("update").click()
+        self.back_homepage()
+        self.contaсt_cache = None
+
+    def modify_contact_by_id(self, id, new_contact_data):
+        wd = self.app.wd
+        #self.open_home_page()
+        self.app.open_home_page()
+        wd.find_elements_by_css_selector(f"a[href*='{id}']")[1].click()
         # fill group form
         self.fill_contact_form(new_contact_data)
         wd.find_element_by_name("update").click()
